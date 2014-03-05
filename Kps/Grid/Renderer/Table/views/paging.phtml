@@ -1,0 +1,10 @@
+
+    <?php if ($this->paging->pageCount > 1): ?>
+        <div class="pagination">
+            <ul>
+                <?php for ($i = 1; $i <= $this->paging->pageCount; $i++): ?>
+                    <li <?php if ($i == $this->paging->current) echo 'class="active"' ?>><a href="<?=$this->baseUrl?>?<?=$this->pageKey?>=<?=$i?>"><?= $i ?></a></li>
+                <?php endfor; ?>
+            </ul>
+        </div>            
+    <?php endif; ?>

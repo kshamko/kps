@@ -1,0 +1,69 @@
+<?php
+$actionUrls = $this->grid->getGridActions();
+?>
+
+<?php if($addUrl = $this->grid->getUrlAdd()): ?>
+<div class="row">
+    <p class="pull-right"><a class="btn btn-primary" href="<?php echo $addUrl?>"><?=We_Grid::translate($this->grid->addButtonLabel)?></a></p>
+</div>
+<?php endif; ?>
+
+<?php
+$data = $this->grid->getData();
+?>
+
+<?php if(count($data)):?>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+                <?php $columnKeys = array(); ?>
+                <?php $cellRenderes = array(); ?>
+
+                <?php foreach($this->grid->getColumns() as $i=>$column): ?>
+                    <?php echo $column->render();?>
+                    <?php $columnKeys[] = $column->getDataKey();?>
+                    <?php $cellRenderes[$i] = $column->getCellRenderers()?>
+                <?php endforeach; ?>
+
+                <?php for($i=0; $i<count($actionUrls); $i++):?>
+            <th></th>
+                <?php endfor; ?>
+        </tr>
+    </thead>
+
+        <?php foreach($data as $row):?>
+    <tr>
+                <?php foreach($columnKeys as $i=>$key): ?>
+        <td>
+                        <?php $value = $row[$key];?>
+                        <?php foreach($cellRenderes[$i] as $cellRenderer): ?>
+                            <?php $value = $cellRenderer->render($value, $row);?>
+                        <?php endforeach; ?>
+                        <?php echo $value?>
+        </td>
+                <?php endforeach; ?>
+
+                <?php foreach($actionUrls as $action):?>
+        <td>
+            <a href="<?php echo $action['url'].$row[$this->grid->getIdKey()]?>" <?php if($action['requireConfirm']):?>onclick="return confirm('Are You Sure?');"<?php endif;?>>
+                <?php echo We_Grid::translate($action['action']);?>
+            </a>
+        </td>
+                <?php endforeach; ?>
+    </tr>
+        <?php endforeach; ?>
+</table>
+
+<table>
+    <tr>
+        <td>
+                <?php echo $this->partial('paging.phtml', array('paging'=>$this->grid->getPaging(), 'baseUrl'=> $this->grid->getBaseUrl(), 'pageKey'=>$this->grid->pageKey));?>
+        </td>
+    </tr>
+</table>
+
+<?php else: ?>
+    <p><?php echo We_Grid::translate('List is empty')?></p>
+<?php endif; ?>
+
+

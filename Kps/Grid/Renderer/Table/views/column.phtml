@@ -1,0 +1,12 @@
+<th width="<?php echo $this->column->getWidth();?>">
+    <?php if($this->column->getSortable()):?>
+    <a href="<?php echo $this->column->getCurrentUri()?>sort[field]=<?php echo $this->column->getDataKey()?>&sort[order]=<?php echo $this->column->getOrder()['nextOrder']?>">
+    <?php endif; ?>
+    
+        <?php echo We_Grid::translate($this->column->getLabel()); ?>
+
+    <?php if($this->column->getFilterable()):?>
+            </a>
+    <?php endif; ?>
+    
+</th>
