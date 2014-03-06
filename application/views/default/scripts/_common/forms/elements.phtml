@@ -1,0 +1,54 @@
+<?php foreach ($this->elements as $element): ?>
+    <?php
+    $errors = $element->getMessages();
+    ?>
+    <?php if ($element instanceof Zend_Form_Element_Submit): ?>
+        <div class="form-actions">
+            <?php $element->setAttrib('class', 'btn btn-primary') ?>
+            <?php echo $element ?>
+        </div>
+    <?php elseif ($element instanceof Zend_Form_Element_Hidden): ?>
+        <?php echo $element ?>
+    <?php else: ?>
+        <div class="row control-group<?php echo (count($errors)) ? ' error' : '' ?>">
+            <?php if ($element->getAttrib('showLabel') !== false): ?>
+                <div class="span3" style="padding-top: 5px;width:200px">
+                    <?php
+                    if ($element->isRequired()) {
+                        //echo ' *';
+                        $element->setLabel($element->getLabel() . ' *');
+                    }
+                    echo $this->formLabel($element->getName(), $element->getLabel(), array('class' => 'control-label', 'style' => 'width:auto;padding:0 5px 0 0'));
+
+                    $tooltip = $element->getDecorator('Tooltip');
+                    if ($tooltip) {
+                        $tooltip->setElement($element);
+                        echo $tooltip->render('');
+                        $element->removeDecorator('Tooltip');
+                    }
+                    ?>                        
+
+                </div>
+            <?php endif; ?>
+
+            <?php
+            if (!$element->getAttrib('class')) {
+                $element->setAttrib('class', 'input-xmedium');
+            }
+            ?>
+
+            <div class="span9" style="width:680px">
+                <div class="controls" style="margin:0">
+                    <?php echo $element ?>
+                    <?php if (count($errors)): ?>
+                        <span class="help-inline">
+                            <?php foreach ($errors as $message): ?>
+                                <?php echo $message ?><br/>
+                            <?php endforeach; ?>
+                        </span>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+<? endforeach; ?>

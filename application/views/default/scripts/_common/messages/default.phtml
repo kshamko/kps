@@ -1,0 +1,30 @@
+<?php
+if ($this->layout()->messages):
+
+    $mOk = '';
+    $mErr = '';
+    foreach ($this->layout()->messages as $_m) {
+        if ($_m['type'] == 'error') {
+            $mErr .= $_m['message']. '<br/>';
+        } else {
+            $mOk .= $_m['message'] . '<br/>';
+        }
+    }
+    ?>
+
+    <?php if ($mOk != ''): ?>
+        <div class="alert alert-success">
+            <button data-dismiss="alert" class="close" type="button">×</button>
+            <?php echo rtrim($mOk); ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($mErr != ''): ?>
+        <div class="alert alert-error">
+            <button data-dismiss="alert" class="close" type="button">×</button>
+            <?php echo rtrim($mErr);  ?>
+        </div>
+    <?php endif; ?>
+
+<?php endif; ?>
+

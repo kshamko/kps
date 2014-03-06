@@ -1,0 +1,26 @@
+<?php
+    $translate = $this->getHelper('Navigation')->view->t;
+    $lang = $this->getHelper('Navigation')->view->lang;
+?>
+<?php if(count($this->pages)):?>
+<ul class="breadcrumb">
+
+    <?php
+    $html = array();
+    foreach ($this->pages as $page) {
+        if($page->isActive()) {
+            $html[] = '<li class="active">';
+            $html[] = $translate->_($page->getLabel());
+        }else {
+            $html[] = '<li>';
+            $html[] = '<a href="'.$page->getHref().'">'.$translate->_($page->getLabel()).'</a>';
+            $html[] = ' <span class="divider">/</span>';
+        }
+        $html[] = '</li>';
+    }
+
+    echo join(PHP_EOL, $html);
+
+    ?>
+</ul>
+<?php endif; ?>

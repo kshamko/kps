@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+// Ensure library/ is on include_path
+set_include_path(implode(PATH_SEPARATOR, array(
+    realpath(dirname(__FILE__).'/../library'),
+    realpath(dirname(__FILE__).'/../library/Doctrine'),
+    get_include_path(),
+)));
+
+include('doctrine-pear.php');

@@ -1,0 +1,41 @@
+<ul id="menu-home" class="menu">
+    <?php $i=1; ?>
+    <?php foreach ($this->menu as $title => $item): ?>
+        <?php
+        $class = 'menu-item menu-item-type-post_type menu-item-object-page ';
+        $url = $item;
+        if (is_array($item)) {
+            $class = 'dropdown';
+            $url = '#';
+        }
+        
+        if(isset($this->active[$title])){
+            $class .= 'current-menu-item page_item page-item-'.$i.' current_page_item ';
+        }
+        
+        $class .='menu-item-'.$i;
+        ?>
+    <li id="menu-item-<?php echo $i?>" class="<?php echo $class ?>">
+            <a href="<?php echo $url ?>"  <?php if ($url == '#'): ?> class="dropdown-toggle" data-toggle="dropdown"<?php endif; ?>>
+                <?php echo $title?>
+                <?php if ($url == '#'): ?><b class="caret"></b><?php endif; ?>
+            </a>
+            <?php if ($url == '#'): ?>
+                <ul  class="dropdown-menu">
+                    <?php foreach ($item as $title => $url): ?>
+                        <li><a href="<?php echo $url ?>"><?php echo $title ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </li>
+        <?php $i++; ?>
+    <?php endforeach; ?>
+
+    <? /*
+      <li><a href="/<?=$this->lang['displayAs']?>surveys/">Surveys</a></li>
+      <li class="dropdown"><a href="/<?=$this->lang['displayAs']?>howto.html" class="dropdown-toggle" data-toggle="dropdown">How To<b class="caret"></b></a>
+      <ul  class="dropdown-menu">
+      <li><a href="/<?=$this->lang['displayAs']?>tools/keys">Keys</a></li>
+      </ul>
+      </li> */ ?>
+</ul>
