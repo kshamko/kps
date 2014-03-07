@@ -32,7 +32,9 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         ini_set('session.save_path', $session_save_path);
     }
     
-    protected function _initDoctrine(){
+    protected function _initDoctrine() {
+        $appConfig = Kps_Application_Config::load();
+        
         # doctrine loader
         require_once (APPLICATION_PATH .
             DIRECTORY_SEPARATOR . '..' .
@@ -48,20 +50,24 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $doctrineAutoloader->register();
         
         # configure doctrine
-        $cache = new Doctrine\Common\Cache\ArrayCache;
         $config = new Configuration;
-        $config->setMetadataCacheImpl($cache);
-        $driverImpl = $config->newDefaultAnnotationDriver( APPLICATION_PATH . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'auth' . DIRECTORY_SEPARATOR . 'models' );
+        
+        //mandatory config
+        $config->setProxyDir( APPLICATION_PATH.'Model/Proxies' );
+        $config->setProxyNamespace('Model\Proxies');
+        $driverImpl = $config->newDefaultAnnotationDriver( APPLICATION_PATH . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Entities' );
         $config->setMetadataDriverImpl($driverImpl);
-        $config->setQueryCacheImpl($cache);
-        $config->setProxyDir( APPLICATION_PATH );
-        $config->setProxyNamespace('Proxies');
-        $config->setAutoGenerateProxyClasses(TRUE);
+        
+        //optional config
+        $cache = new $appConfig['doctrine']['cacheImplementation'];
+        $config->setMetadataCacheImpl($cache);
+        $config->setQueryCacheImpl($cache);        
+        $config->setAutoGenerateProxyClasses($appConfig['doctrine']['autoGenerateProxyClasses']);
 
         # database connection
-        $appConfig = Kps_Application_Config::load();
-       
-        Zend_Registry::set('doctrine_em', EntityManager::create($appConfig['doctrine']['connection'], $config));
+        
+        $em = EntityManager::create($appConfig['doctrine']['connection'], $config);
+        Zend_Registry::set('doctrine_em', $em);
     }
         
     /**
@@ -162,7 +168,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     /**
      * @todo hardcoded groups
      */
-    protected function _initAcl() {
+   /* protected function _initAcl() {
         $oAuth = new Model_Users_Auth();
         $user = $oAuth->getUserSession(true);
         $this->_view->currentUser = $user;
@@ -181,7 +187,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         }
 
         Zend_Registry::set('acl', $acl);
-    }
+    }*/
 
     protected function _initNavigation() {
         require_once APPLICATION_PATH . '/configs/navigation.php';
