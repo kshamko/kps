@@ -24,10 +24,10 @@ class Kps_Acl_Plugin extends Zend_Controller_Plugin_Abstract {
     public function dispatchLoopStartup(Zend_Controller_Request_Abstract $request) {
         $acl = Zend_Registry::get('acl');
 
-        $oAuth = new Model_Users_Auth();
-        $user = $oAuth->getUserSession();
+        $oAuth = Zend_Auth::getInstance();
+        $user = $oAuth->getIdentity();
 
-        $group = (isset($user['user_acl_group'])) ? $user['user_acl_group'] : 'guest';
+        $group = (isset($user)) ? $user['user_group'] : 'guest';
 
         $resourse = $request->getModuleName() . ':' . $request->getControllerName() . ':' . str_replace('_', '', $request->getActionName());
 

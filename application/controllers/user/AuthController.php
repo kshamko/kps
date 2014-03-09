@@ -40,7 +40,7 @@ class user_AuthController extends Kps_Controller {
 
     /**
      * Displays control to logout
-     * @acl_groups guest, root, client, candidate
+     * @acl_groups guest, root, member
      */
     public function showlogoutAction() {
         //user data is assigned in Bootstrap.php
@@ -93,7 +93,7 @@ class user_AuthController extends Kps_Controller {
 
     /**
      * Performs logout action
-     * @acl_groups guest, root, client, candidate
+     * @acl_groups guest, root, member
      */
     public function logoutAction() {
         $oAuth = new Model_Users_Auth();
@@ -103,7 +103,7 @@ class user_AuthController extends Kps_Controller {
 
     /**
      * This action is shown wnen some other requiested action is forbidden
-     * @acl_groups guest, root, client, candidate
+     * @acl_groups guest, root, member
      */
     public function forbiddenAction() {
         $oAuth = new Model_Users_Auth();

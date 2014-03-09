@@ -26,20 +26,22 @@ set_include_path(implode(PATH_SEPARATOR, array(
 
 /** Zend_Application */
 require_once 'Zend/Application.php';
-require_once 'We/Application.php';
-require_once 'We/Application/Config.php';
+require_once 'Kps/Application.php';
+require_once 'Kps/Application/Config.php';
 
 // Create application, bootstrap, and run
-$application = new We_Application(
+$application = new Kps_Application(
                 APPLICATION_ENV,
                 APPLICATION_PATH . '/configs/application.ini'
 );
 $application->bootstrap();
 
-$acl = new Model_Acl();
+$em = Zend_Registry::get('doctrine_em');
+
+$acl = $em->getRepository('Model\Entities\Acl');
 $acl->truncate(); //->getData();
 
-$config = We_Application_Config::load();
+$config = Kps_Application_Config::load();
 $systemGroups = $config['acl']['group'];
 
 $front = $front = Zend_Controller_Front::getInstance();
@@ -67,9 +69,12 @@ foreach ($front->getControllerDirectory() as $module => $path) {
                                 foreach ($groups as $group) {
                                     $group = trim($group);
                                     if (!isset($systemGroups[$group])) {
-                                        throw new We_Acl_Exception('Group ' . $group . ' is not exists. check your config');
+                                        throw new Kps_Acl_Exception('Group ' . $group . ' is not exists. check your config');
                                     }
-                                    $acl->addAcl(array('acl_resource' => $resource, 'acl_group' => $group));
+                                    $aclEntity = new Model\Entities\Acl();
+                                    $aclEntity->setAclGroup($group)
+                                            ->setAclResource($resource);
+                                    $em->persist($aclEntity);
                                 }
                             }
                         } catch (Exception $e) {
@@ -82,3 +87,4 @@ foreach ($front->getControllerDirectory() as $module => $path) {
     }
 }
 
+$em->flush();

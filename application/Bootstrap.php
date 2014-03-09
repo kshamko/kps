@@ -1,11 +1,18 @@
 <?php
 use Doctrine\ORM\EntityManager,
-    Doctrine\ORM\Configuration;
+    Doctrine\ORM\Configuration,
+    Doctrine\Common\Annotations\AnnotationRegistry,
+    Doctrine\Common\Annotations\AnnotationReader;
 
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
     private $_view;
-
+    /**
+     *
+     * @var Doctrine\ORM\EntityManager
+     */
+    private $_em;
+    
     protected function _initConst() {
         define('DS', DIRECTORY_SEPARATOR);
         define('PS', PATH_SEPARATOR);
@@ -55,9 +62,11 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         //mandatory config
         $config->setProxyDir( APPLICATION_PATH.'Model/Proxies' );
         $config->setProxyNamespace('Model\Proxies');
+        
         $driverImpl = $config->newDefaultAnnotationDriver( APPLICATION_PATH . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Entities' );
         $config->setMetadataDriverImpl($driverImpl);
-        
+        $config->setEntityNamespaces(array('Model\Entities'));
+                
         //optional config
         $cache = new $appConfig['doctrine']['cacheImplementation'];
         $config->setMetadataCacheImpl($cache);
@@ -66,8 +75,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
         # database connection
         
-        $em = EntityManager::create($appConfig['doctrine']['connection'], $config);
-        Zend_Registry::set('doctrine_em', $em);
+        $this->_em = EntityManager::create($appConfig['doctrine']['connection'], $config);
+        Zend_Registry::set('doctrine_em', $this->_em);
     }
         
     /**
@@ -103,7 +112,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
         $router = $front->getRouter();
         
-        $front->addControllerDirectory(HOME_DIR . 'application/controllers/admin', 'admin');
+        //$front->addControllerDirectory(HOME_DIR . 'application/controllers/admin', 'admin');
         $front->addControllerDirectory(HOME_DIR . 'application/controllers/user', 'user');
         $front->addControllerDirectory(HOME_DIR . 'application/controllers/content', 'content');
         $config = new Zend_Config_Ini(HOME_DIR.'application/configs/routes/content.ini', 'production');
@@ -136,7 +145,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
 
     protected function _initPlugins() {
         $front = Zend_Controller_Front::getInstance();
-        $front->registerPlugin(new Kps_Acl_Plugin());
+        //$front->registerPlugin(new Kps_Acl_Plugin());
     }
 
     protected function _initCache() {
@@ -168,26 +177,35 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
     /**
      * @todo hardcoded groups
      */
-   /* protected function _initAcl() {
-        $oAuth = new Model_Users_Auth();
-        $user = $oAuth->getUserSession(true);
+    protected function _initAcl() {
+        $oAuth = Zend_Auth::getInstance();
+        
+        /*$adapter = new LoSo_Zend_Auth_Adapter_Doctrine2(
+                    Zend_Registry::get('doctrine_em'),
+                    'User',
+                    'user_email',
+                    'user_password'
+                );*/
+        
+        $user = $oAuth->getIdentity();
         $this->_view->currentUser = $user;
+        $currentGroup = ($user) ? $user['user_group'] : 'guest';
 
-        $currentGroup = (isset($user['user_group'])) ? $user['user_group'] : 'guest';
-        $oAcl = new Model_Acl();
-        $resources = $oAcl->getAclByGroup($currentGroup);
+        
+        $oAcl = $this->_em->getRepository('Model\Entities\Acl');
+        $resources = $oAcl->findBy(array('acl_group'=>$currentGroup));
 
         $acl = new Zend_Acl();
         $acl->addRole(new Zend_Acl_Role($currentGroup));
         foreach ($resources as $resource) {
-            if (!$acl->has($resource['acl_resource'])) {
-                $acl->add(new Zend_Acl_Resource($resource['acl_resource']));
+            if (!$acl->has($resource->getAclResource())) {
+                $acl->add(new Zend_Acl_Resource($resource->getAclResource()));
             }
-            $acl->allow($currentGroup, $resource['acl_resource']);
+            $acl->allow($currentGroup, $resource->getAclResource());
         }
 
         Zend_Registry::set('acl', $acl);
-    }*/
+    }
 
     protected function _initNavigation() {
         require_once APPLICATION_PATH . '/configs/navigation.php';

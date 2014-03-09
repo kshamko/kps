@@ -117,7 +117,7 @@ class Zend_Auth
         $result = $adapter->authenticate();
 
         /**
-         * ZF-7546 - prevent multiple succesive calls from storing inconsistent results
+         * ZF-7546 - prevent multiple succesive caLoSo_Zend_Authlls from storing inconsistent results
          * Ensure storage has clean state
          */
         if ($this->hasIdentity()) {
