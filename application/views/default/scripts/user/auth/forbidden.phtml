@@ -1,5 +1,6 @@
 <?php if ($this->isLoggedIn): ?>
-    <?php echo $this->pageHeader('Forbidden');?>
+    <h1>Forbidden</h1><br/><br/>
+    
     <p>You are not allowed to access this page</p>
 <?php else: ?>
     <?php echo $this->action('index', 'auth', 'user', array('redirect'=>$this->redirectUrl)) ?>

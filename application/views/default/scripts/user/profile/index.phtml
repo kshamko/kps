@@ -1,0 +1,22 @@
+<h1>Profile</h1><br/><br/>
+
+<div class="panel-group" id="accordion">
+    <?php foreach ($this->sections as $i => $s): ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                 <h4 class="panel-title">
+                <a href="#collapse<?php echo $i ?>" data-parent="#accordion2" data-toggle="collapse" class="accordion-toggle">
+                    <?php echo $s['title'] ?>
+                </a>
+                     </h4>
+            </div>
+            <div class="panel-collapse collapse <?php echo $s['is_opened']?' in ':''?>" id="collapse<?php echo $i ?>">
+                <div class="panel-body">
+                    <?php echo $this->partial('_common/forms/default.phtml', array('form'=>$s['form'])); ?>
+                </div>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+

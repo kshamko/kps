@@ -1,23 +1,21 @@
-<ul id="menu-home" class="menu">
-    <?php $i=1; ?>
+<ul class="nav navbar-nav">
+    <?php $i = 1; ?>
     <?php foreach ($this->menu as $title => $item): ?>
         <?php
-        $class = 'menu-item menu-item-type-post_type menu-item-object-page ';
+        $class = '';
         $url = $item;
         if (is_array($item)) {
             $class = 'dropdown';
             $url = '#';
         }
-        
-        if(isset($this->active[$title])){
-            $class .= 'current-menu-item page_item page-item-'.$i.' current_page_item ';
+
+        if (isset($this->active[$title])) {
+            $class .= 'active ';
         }
-        
-        $class .='menu-item-'.$i;
         ?>
-    <li id="menu-item-<?php echo $i?>" class="<?php echo $class ?>">
+        <li id="menu-item-<?php echo $i ?>" class="<?php echo $class ?>">
             <a href="<?php echo $url ?>"  <?php if ($url == '#'): ?> class="dropdown-toggle" data-toggle="dropdown"<?php endif; ?>>
-                <?php echo $title?>
+                <?php echo $title ?>
                 <?php if ($url == '#'): ?><b class="caret"></b><?php endif; ?>
             </a>
             <?php if ($url == '#'): ?>

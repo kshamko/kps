@@ -22,14 +22,18 @@ class user_RegisterController extends Kps_Controller {
                 $user->setUserEmail($data['user_email'])
                      ->setUserPassword(md5($data['user_password']))
                      ->setUserStatus(0)
-                     ->setUserRegistrationDate(time())   
+                     ->setUserRegistrationDate(new DateTime('now'))   
                      ->setUserGroup('member');
                 
                 $this->_em->persist($user);
                 $this->_em->flush();
                 
                 //notify via email
+                 
                 
+                //login
+                $this->_auth->getStorage()->write($user);
+                $this->_redirect('/user/profile');
             }
         }
 

@@ -159,7 +159,7 @@ class LoSo_Zend_Auth_Adapter_Doctrine2 implements Zend_Auth_Adapter_Interface
                     $authResult['messages'][] = 'Supplied credential is invalid.';
                 } else {
                     $authResult['code'] = Zend_Auth_Result::SUCCESS;
-                    $authResult['identity'] = $this->identity;
+                    $authResult['identity'] = $result[0][0];
                     $authResult['messages'][] = 'Authentication successful.';
                 }
             }

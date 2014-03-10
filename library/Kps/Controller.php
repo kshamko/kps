@@ -13,11 +13,19 @@ abstract class Kps_Controller extends Zend_Controller_Action {
      * @var Doctrine\ORM\EntityManager
      */
     protected $_em;
+    
     /**
      *
      * @var Zend_Cache_Backend_Memcached
      */
     protected $_cache;
+
+    /**
+     *
+     * @var Zend_Auth
+     */
+    protected $_auth;
+
 
     public function init() {
         $this->_messages = Kps_Messages::getInstance();
@@ -35,6 +43,8 @@ abstract class Kps_Controller extends Zend_Controller_Action {
         }
         
         $this->_em = Zend_Registry::get('doctrine_em');
+        
+        $this->_auth = Zend_Auth::getInstance();
     }
 
     public function preDispatch() {

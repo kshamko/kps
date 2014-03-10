@@ -1,1 +1,4 @@
-<?php echo $this->render('_common/forms/default.phtml'); ?>
+<h1>Log In</h1><br/><br/>
+
+<?php
+echo $this->partial('_common/forms/default.phtml', array('form' => $this->form));

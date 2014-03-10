@@ -60,7 +60,7 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
         $config = new Configuration;
         
         //mandatory config
-        $config->setProxyDir( APPLICATION_PATH.'Model/Proxies' );
+        $config->setProxyDir( APPLICATION_PATH.'/Model/Proxies' );
         $config->setProxyNamespace('Model\Proxies');
         
         $driverImpl = $config->newDefaultAnnotationDriver( APPLICATION_PATH . DIRECTORY_SEPARATOR . 'Model' . DIRECTORY_SEPARATOR . 'Entities' );
@@ -187,9 +187,12 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap {
                     'user_password'
                 );*/
         
+        /**
+         * @var Model\Entities\User
+         */
         $user = $oAuth->getIdentity();
         $this->_view->currentUser = $user;
-        $currentGroup = ($user) ? $user['user_group'] : 'guest';
+        $currentGroup = ($user) ? $user->getUserGroup() : 'guest';
 
         
         $oAcl = $this->_em->getRepository('Model\Entities\Acl');

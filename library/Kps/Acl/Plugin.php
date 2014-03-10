@@ -25,9 +25,12 @@ class Kps_Acl_Plugin extends Zend_Controller_Plugin_Abstract {
         $acl = Zend_Registry::get('acl');
 
         $oAuth = Zend_Auth::getInstance();
+        /**
+         * @var Model\Entities\User
+         */
         $user = $oAuth->getIdentity();
 
-        $group = (isset($user)) ? $user['user_group'] : 'guest';
+        $group = (isset($user)) ? $user->getUserGroup() : 'guest';
 
         $resourse = $request->getModuleName() . ':' . $request->getControllerName() . ':' . str_replace('_', '', $request->getActionName());
 

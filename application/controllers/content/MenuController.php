@@ -20,43 +20,36 @@ class content_MenuController extends Kps_Controller {
      */
     public function topAction() {
         $currentUrl = trim($this->_request->getPathInfo());
-        
+
         $menu = array(
             'Home' => '/',
-            'Solutions' => '/solutions',
-            'Client' => '/user/client',
+            'About' => '/about.html',
         );
-        
 
-        $oAuth = new Model_Users_Auth();
-        if($oAuth->isLoggedIn()){
-            $user = $oAuth->getUserSession();
-            
-            if($user['user_group'] == 'client'){
-                unset($menu['Candidate']);
-            }elseif($user['user_group'] == 'candidate'){
-                unset($menu['Client']);
-                unset($menu['Video Resume Library']);
-            }
-        } else {
-            unset($menu['Video Resume Library']);
+        if($this->_auth->hasIdentity()){
+            $menu['Profile'] = '/user/profile';
+            $menu['Log Out'] = '/user/auth/logout';
+        }else{
+            $menu['Register'] = '/user/register';
+            $menu['Log In'] = '/user/auth';
+            $menu['Restore Password'] = '/user/password';
         }
         
         $active = '';
-        foreach($menu as $title=>$item){
-            if(is_array($item)){
-                foreach($item as $subtitle=>$url){
-                if($currentUrl == $url){
-                    $active[$title] = $item;
+        foreach ($menu as $title => $item) {
+            if (is_array($item)) {
+                foreach ($item as $subtitle => $url) {
+                    if ($currentUrl == $url) {
+                        $active[$title] = $item;
+                    }
                 }
-                }
-            }else{
-                if($currentUrl == $item){
+            } else {
+                if ($currentUrl == $item) {
                     $active[$title] = $item;
                 }
             }
         }
-        
+
         $this->view->active = $active;
         $this->view->menu = $menu;
     }

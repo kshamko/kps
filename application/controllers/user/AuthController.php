@@ -14,9 +14,11 @@ class user_AuthController extends Kps_Controller {
 
         $redirect = $this->_request->getParam('redirect');
 
-        if ($redirect) {
-            $sessionRedirect = new Zend_Session_Namespace('Redirect');
+        $sessionRedirect = new Zend_Session_Namespace('Redirect');
+        if ($redirect) {            
             $sessionRedirect->url = $redirect;
+        }else{
+            $sessionRedirect->unsetAll();
         }
         
         $this->view->small = $this->_request->getParam('small');
@@ -60,10 +62,15 @@ class user_AuthController extends Kps_Controller {
             $this->_redirect('/user/auth');
         }
 
-        $oAuth = new Model_Users_Auth();
-
-        $result = $oAuth->login($un, $pass);
-        switch ($result['code']) {
+        $authAdapter = new LoSo_Zend_Auth_Adapter_Doctrine2($this->_em, 'Model\Entities\User');
+        $authAdapter->setCredentialField('userPassword')
+                ->setCredential(md5($pass))
+                ->setIdentityField('userEmail')
+                ->setIdentity($un);
+        
+        $result = $this->_auth->authenticate($authAdapter);
+        
+        switch ($result->getCode()) {
             case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND :
                 $this->_messages->setMessage('Username was not found', 'error');
                 $redirectUrl = '/user/auth';
@@ -73,15 +80,14 @@ class user_AuthController extends Kps_Controller {
                 $redirectUrl = '/user/auth';
                 break;
             case Zend_Auth_Result::SUCCESS :
-                if ($result['data']['is_active']) {
-                    $oAuth->setUserSession($result['data']);
-
-                    if ($result['data']['user_group'] == 'root') {
+                if ($result->getIdentity()->getUserStatus()) {
+                    if ($result->getIdentity()->getUserGroup() == 'root') {
                         $redirectUrl = '/admin';
                     } else {
                         $this->_doRedirect();
                     }
                 } else {
+                    $this->_auth->clearIdentity();
                     $this->_messages->setMessage('Your account is not active', 'error');
                     $this->_redirect('/user/auth');
                 }
@@ -96,8 +102,7 @@ class user_AuthController extends Kps_Controller {
      * @acl_groups guest, root, member
      */
     public function logoutAction() {
-        $oAuth = new Model_Users_Auth();
-        $oAuth->logout();
+        $this->_auth->clearIdentity();
         $this->_redirect('/');
     }
 
@@ -106,8 +111,7 @@ class user_AuthController extends Kps_Controller {
      * @acl_groups guest, root, member
      */
     public function forbiddenAction() {
-        $oAuth = new Model_Users_Auth();
-        $this->view->isLoggedIn = $oAuth->isLoggedIn();
+        $this->view->isLoggedIn = $this->_auth->hasIdentity();
         $uriParts = explode('/', $this->_request->getRequestUri());
         $this->view->requestedUrl = '/' . implode('/', $uriParts);
         $this->view->forbidden = true;
