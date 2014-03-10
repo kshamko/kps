@@ -1,59 +1,48 @@
-<form class="form-horizontal" enctype="multipart/form-data" action="<?=$this->form->getAction()?>" method="<?=$this->form->getMethod()?>" name="<?=$this->form->getName()?>">
-    <fieldset>
-        <?php foreach($this->form->getElements() as $element):?>
-            <?php
-            $errors = $element->getMessages();
-            ?>
-            <?php if($element instanceof Zend_Form_Element_Submit ): ?>
-                <div class="">
-                    <?php $element->setAttrib('class', 'btn btn-primary wpcf-submit')?>
-                    <?php echo $element ?>
+<form class="form-horizontal" enctype="multipart/form-data" action="<?= $this->form->getAction() ?>" method="<?= $this->form->getMethod() ?>" name="<?= $this->form->getName() ?>">
+    <?php foreach ($this->form->getElements() as $element): ?>
+        <?php
+        $errors = $element->getMessages();
+        ?>
+
+        <?php if ($element instanceof Zend_Form_Element_Submit): ?>
+            <?php $element->setAttrib('class', 'btn btn-primary') ?>
+            <?php echo $element ?>
+        <?php elseif ($element instanceof Zend_Form_Element_Hidden): ?>
+            <?php echo $element ?>
+        <?php else: ?>
+
+            <div class="form-group">
+                <?php if ($element->getAttrib('showLabel') !== false): ?>
+                    <?php
+                    if ($element->isRequired()) {
+                        //echo ' *';
+                        $element->setLabel($element->getLabel() . ' *');
+                    }
+                    echo $this->formLabel($element->getName(), $element->getLabel(), array('class' => 'col-sm-2 control-label', 'style' => ''));
+
+                    /* $tooltip = $element->getDecorator('Tooltip');
+                      if ($tooltip) {
+                      $tooltip->setElement($element);
+                      echo $tooltip->render('');
+                      $element->removeDecorator('Tooltip');
+                      } */
+                    ?> 
+                <?php endif; ?>
+
+                <div class="col-sm-4">                        
+                    <?php
+                    $element->setAttrib('class', 'form-control');
+                    echo $element;
+                    ?>     
                 </div>
-            <?php elseif($element instanceof Zend_Form_Element_Hidden): ?>
-                <?php echo $element ?>
-            <?php else: ?>
-                <div class="row control-group<?php echo (count($errors))?' error':''?>">
-                    <?php if($element->getAttrib('showLabel')!==false):?>
-                    <div class="<?php echo $this->labelClass?$this->labelClass:'span3'?>" style="padding-top: 5px;">
-                        <?php
-
-                            if ($element->isRequired()) {
-                                //echo ' *';
-                                $element->setLabel($element->getLabel().' *');
-                            }                        
-                            echo $this->formLabel($element->getName(), $element->getLabel(), array('class' => 'control-label', 'style'=>'width:200px;padding:0 5px 0 0'));
-
-                            $tooltip = $element->getDecorator('Tooltip');
-                            if ($tooltip) {
-                                $tooltip->setElement($element);
-                                echo $tooltip->render('');
-                                $element->removeDecorator('Tooltip');
-                            }
-                            ?>                        
-                        
-                          </div>
-                    <?php endif; ?>
-
-                    <?php 
-                        if(!$element->getAttrib('class')) {
-                            $element->setAttrib('class', 'input-xmedium');
-                        }
-                    ?>
-                  
-                    <div class="<?php echo $this->fieldClass?$this->fieldClass:''?>">
-                    <div class="controls" style="margin:0">
-                        <?php echo $element ?>
-                        <?php if(count($errors)):?>
-                            <span class="help-inline">
-                                <?php foreach($errors as $message): ?>
-                                    <?php echo $message ?><br/>
-                                <?php endforeach; ?>
-                            </span>
-                        <?php endif; ?>
-                    </div>
-                        </div>
-                </div>
-            <?php endif; ?>
-        <? endforeach; ?>
-    </fieldset>
+                <?php if (count($errors)): ?>
+                    <span class="col-sm-4 help-inline">
+                        <?php foreach ($errors as $message): ?>
+                            <?php echo $message ?><br/>
+                        <?php endforeach; ?>
+                    </span>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; ?>
 </form>

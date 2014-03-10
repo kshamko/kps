@@ -10,6 +10,11 @@ abstract class Kps_Controller extends Zend_Controller_Action {
     protected $_config;
     /**
      *
+     * @var Doctrine\ORM\EntityManager
+     */
+    protected $_em;
+    /**
+     *
      * @var Zend_Cache_Backend_Memcached
      */
     protected $_cache;
@@ -28,6 +33,8 @@ abstract class Kps_Controller extends Zend_Controller_Action {
             $this->view->ajax = true;
             $this->_helper->layout()->disableLayout();
         }
+        
+        $this->_em = Zend_Registry::get('doctrine_em');
     }
 
     public function preDispatch() {

@@ -5,11 +5,20 @@ class Kps_Validate_UserEmail extends Zend_Validate_Abstract{
     const INVALID = 'Email exists';
 
     private $_exclude = array();
-
+    private $_userModel = null;
+    
     protected $_messageTemplates = array(
         self::INVALID      => "%value% is already registered",
     );
-
+    
+    public function __construct($options = null) {
+        if(is_array($options) && isset($options['userModel']) && is_object($options['userModel'])){
+            $this->_userModel = $options['userModel'];
+        }else{
+            throw new \Exception('Please set proper userModel option for Kps_Validate_UserEmail');
+        }
+    }
+    
     public function excludeEmail($email){
         $this->_exclude[] = $email;
     }
@@ -20,9 +29,10 @@ class Kps_Validate_UserEmail extends Zend_Validate_Abstract{
             return true;
         }
 
-        $oUser = new Model_Users();
-        $user = $oUser->getUserByEmail($value);//->getData();
+        $user = $this->_userModel->getUserByEmail($value);
 
+        print_r($user);
+        
         if(!$user){
             return true;
         }else{            

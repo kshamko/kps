@@ -23,8 +23,7 @@ $application = new Zend_Application(
 );
 
 // Bootstrapping resources
-$bootstrap = $application->bootstrap()->getBootstrap();
-$bootstrap->bootstrap('Doctrine');
+$bootstrap = $application->bootstrap(array('Const', 'Autoload', 'Doctrine'));
 
 $em = Zend_Registry::get('doctrine_em');
 

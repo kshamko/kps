@@ -5,9 +5,9 @@ namespace Model\Entities;
  * Users
  *
  * @Table(name="kps_users")
- * @Entity
+ * @Entity(repositoryClass="Model\Repositories\Users")
  */
-class Users
+class User
 {
     /**
      * @var integer
@@ -42,14 +42,14 @@ class Users
     /**
      * @var string
      *
-     * @Column(name="user_email", type="string", length=255, nullable=true)
+     * @Column(name="user_email", type="string", length=255, nullable=false)
      */
     private $userEmail;
 
     /**
      * @var string
      *
-     * @Column(name="user_password", type="string", length=255, nullable=true)
+     * @Column(name="user_password", type="string", length=255, nullable=false)
      */
     private $userPassword;
 
