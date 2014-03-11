@@ -30,8 +30,6 @@ class Kps_Validate_UserEmail extends Zend_Validate_Abstract{
         }
 
         $user = $this->_userModel->getUserByEmail($value);
-
-        print_r($user);
         
         if(!$user){
             return true;

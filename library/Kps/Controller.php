@@ -25,6 +25,12 @@ abstract class Kps_Controller extends Zend_Controller_Action {
      * @var Zend_Auth
      */
     protected $_auth;
+    
+    /**
+     *
+     * @var Zend_Log
+     */
+    protected $_log;
 
 
     public function init() {
@@ -42,9 +48,9 @@ abstract class Kps_Controller extends Zend_Controller_Action {
             $this->_helper->layout()->disableLayout();
         }
         
-        $this->_em = Zend_Registry::get('doctrine_em');
-        
         $this->_auth = Zend_Auth::getInstance();
+        $this->_em = Zend_Registry::get('doctrine_em');        
+        $this->_log = Zend_Registry::get('logger');
     }
 
     public function preDispatch() {

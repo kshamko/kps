@@ -51,7 +51,10 @@
 
         <div class="container">
 
-            <div class="starter-template">          
+            <div class="starter-template">     
+                
+                <?php echo $this->partial('_common/messages/default.phtml'); ?>
+                
                 <?php echo $this->layout()->content ?>    
             </div>
 

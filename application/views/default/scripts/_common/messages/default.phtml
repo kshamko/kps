@@ -20,7 +20,7 @@ if ($this->layout()->messages):
     <?php endif; ?>
 
     <?php if ($mErr != ''): ?>
-        <div class="alert alert-error">
+        <div class="alert alert-danger">
             <button data-dismiss="alert" class="close" type="button">×</button>
             <?php echo rtrim($mErr);  ?>
         </div>

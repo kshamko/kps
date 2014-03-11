@@ -4,7 +4,7 @@ namespace Model\Entities;
 /**
  * Users
  *
- * @Table(name="kps_users")
+ * @Table(name="kps_users", indexes={@index(name="emailIndex", columns={"user_email"}), @index(name="codeIndex", columns={"user_activation_code"})})
  * @Entity(repositoryClass="Model\Repositories\Users")
  */
 class User
@@ -49,7 +49,7 @@ class User
     /**
      * @var string
      *
-     * @Column(name="user_password", type="string", length=255, nullable=false)
+     * @Column(name="user_password", type="string", length=30, nullable=false)
      */
     private $userPassword;
 
@@ -60,6 +60,14 @@ class User
      */
     private $userRegistrationDate;
 
+    
+    /**
+     * @var string
+     *
+     * @Column(name="user_activation_code", type="string", length=30, nullable=true)
+     */
+    private $userActivationCode;
+    
     /**
      * @var boolean
      *
@@ -238,5 +246,28 @@ class User
     public function getUserStatus()
     {
         return $this->userStatus;
+    }
+
+    /**
+     * Set userActivationCode
+     *
+     * @param string $userActivationCode
+     * @return User
+     */
+    public function setUserActivationCode($userActivationCode)
+    {
+        $this->userActivationCode = $userActivationCode;
+    
+        return $this;
+    }
+
+    /**
+     * Get userActivationCode
+     *
+     * @return string 
+     */
+    public function getUserActivationCode()
+    {
+        return $this->userActivationCode;
     }
 }
