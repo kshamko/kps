@@ -12,8 +12,30 @@ use Doctrine\ORM\EntityRepository;
  */
 class Users extends EntityRepository {
 
+    /**
+     * 
+     * @param string $emailAddress
+     * @return Model\Entities\User
+     */
     public function getUserByEmail($emailAddress) {
-        return $this->findBy(array('userEmail' => $emailAddress));
+        return $this->findOneBy(array('userEmail' => $emailAddress));
     }
 
+    /**
+     * 
+     * @param string $code
+     * @return Model\Entities\User
+     */
+    public function getUserByPassCode($code){
+        return $this->findOneBy(array('userResetPassCode' => $code));
+    }
+    
+    /**
+     * 
+     * @param string $code
+     * @return Model\Entities\User
+     */    
+    public function getUserByActivationCode($code){
+        return $this->findOneBy(array('userActivationCode' => $code));
+    }    
 }

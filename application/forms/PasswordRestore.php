@@ -1,13 +1,11 @@
 <?php
 
-class forms_Auth extends Zend_Form {
+class forms_PasswordRestore extends Zend_Form {
 
     public function init() {
         parent::init();
         $this->setName('auth');
-        $this->setAction('/user/auth/login');
-        
-        $em = Zend_Registry::get('doctrine_em');
+        $this->setAction('/user/password');
         
         $email = new Zend_Form_Element_Text('user_email');
         $email->setDecorators(array(new Zend_Form_Decorator_ViewHelper()))
@@ -15,12 +13,7 @@ class forms_Auth extends Zend_Form {
                 ->setLabel('Email');
         $this->addElement($email);
         
-        $password = new Zend_Form_Element_Password('user_password');
-        $password->setDecorators(array(new Zend_Form_Decorator_ViewHelper()))
-                ->setLabel('Password');        
-        $this->addElement($password);
-        
-        $submit = new Zend_Form_Element_Submit('Log In');
+        $submit = new Zend_Form_Element_Submit('Restore');
         $submit->setDecorators(array(new Zend_Form_Decorator_ViewHelper()));
         $this->addElement($submit);         
         

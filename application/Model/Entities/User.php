@@ -49,7 +49,7 @@ class User
     /**
      * @var string
      *
-     * @Column(name="user_password", type="string", length=30, nullable=false)
+     * @Column(name="user_password", type="string", length=50, nullable=false)
      */
     private $userPassword;
 
@@ -59,7 +59,6 @@ class User
      * @Column(name="user_registration_date", type="datetime", nullable=false)
      */
     private $userRegistrationDate;
-
     
     /**
      * @var string
@@ -67,6 +66,13 @@ class User
      * @Column(name="user_activation_code", type="string", length=30, nullable=true)
      */
     private $userActivationCode;
+    
+    /**
+     * @var string
+     *
+     * @Column(name="user_reset_pass_code", type="string", length=50, nullable=true)
+     */
+    private $userResetPassCode;    
     
     /**
      * @var boolean
@@ -269,5 +275,28 @@ class User
     public function getUserActivationCode()
     {
         return $this->userActivationCode;
+    }
+
+    /**
+     * Set userResetPassCode
+     *
+     * @param string $userResetPassCode
+     * @return User
+     */
+    public function setUserResetPassCode($userResetPassCode)
+    {
+        $this->userResetPassCode = $userResetPassCode;
+    
+        return $this;
+    }
+
+    /**
+     * Get userResetPassCode
+     *
+     * @return string 
+     */
+    public function getUserResetPassCode()
+    {
+        return $this->userResetPassCode;
     }
 }
