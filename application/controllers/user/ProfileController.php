@@ -11,27 +11,31 @@ class user_ProfileController extends Kps_Controller {
     public function indexAction() {
 
         $data = $this->_request->getParams();
+        $user = $this->_auth->getIdentity();
+
+        $profileForm = new forms_Profile(array('ignore_email' => $user->getUserEmail()));
+        $profileForm->setDefaults(array(), $user);
+
 
         $forms = array(
-            'changePass' => new forms_Password(),
-            'profileInfo' => new forms_Profile(),
+            'password' => new forms_Password(),
+            'profile' => $profileForm,
         );
 
 
         $sections = array(
-            'profileInfo' => array(
+            'profile' => array(
                 'title' => 'General Info',
-                'form' => $forms['profileInfo'],
+                'form' => $forms['profile'],
                 'is_opened' => true,
             ),
-            'changePass' => array(
+            'password' => array(
                 'title' => 'Change Password',
-                'form' => $forms['changePass'],
+                'form' => $forms['password'],
                 'is_opened' => true,
             ),
         );
-        
-        
+
 
         if ($this->_request->isPost()) {
             if (!isset($data['form_action']) || !isset($forms[$data['form_action']])) {
@@ -41,42 +45,51 @@ class user_ProfileController extends Kps_Controller {
 
             $form = $forms[$data['form_action']];
             if ($form->isValid($data)) {
-                $result = $this->{'_' . $data['form_action']}($data);
+                $this->{'_' . $data['form_action']}($data, $form);
+                $this->_redirect('/user/profile');
             }
         }
-        
+
         //$forms['clientInfo']->populate($this->_user);
 
         $this->view->sections = $sections;
     }
 
-    private function _changePass($data) {
-        $oUsers = new Model_Users();
-        $this->_messages->setMessage('Password has been updated');
-        return $oUsers->updateUser($this->_user['user_id'], array('user_password' => $data['user_password']));
+    private function _password($data, forms_Password $form) {
+        $user = $this->_auth->getIdentity();
+        $user->setUserPassword(md5($data['user_password']));
+        $this->_em->merge($user);
+        $this->_em->flush();
+        $this->_messages->setMessage('Password has been updated.');
     }
 
-    private function _profileInfo($data) {
-        $isChanged = false;
-        $updatedData = array(
-            'user_company_name' => $data['user_company_name'],
-            'user_first_name' => $data['user_first_name'],
-            'user_last_name' => $data['user_last_name'],
-            'user_phone_number' => $data['user_phone_number'],
-            'user_company_size' => $data['user_company_size'],
-        );
+    private function _profile($data, forms_Profile $form) {
+        $user = $this->_auth->getIdentity();
+        $email = $user->getUserEmail();
+        $mailer = null;
         
-        foreach ($updatedData as $key => $value) {
-            if ($value != $this->_user[$key]) {
-                $isChanged = true;
-            }
+        if ($data['user_email'] != $user->getUserEmail()) {
+            $code = md5(microtime() . rand(1000, 9999));
+            $user->setUserStatus(0)
+                 ->setUserActivationCode($code);
+            
+            
+            $mailer = new Helper_Mail();
+            $mailer->setSubject('Please reactivate your account!')
+                    ->setRecipient($data['user_email'])
+                    ->setBody('reactivate_account', array('code'=>$code));
         }
+
+        $form->save($user);
         
-        if ($isChanged) {
-            $oUsers = new Model_Users();
-            $this->_messages->setMessage('General Info has been updated');
-            return $oUsers->updateUser($this->_user['user_id'], $updatedData);
+        $message = 'Profile has been updated.';
+        if(!is_null($mailer)){
+            $mailer->send();
+            $message .= ' Please reactivate your account.';
         }
+
+        //add some logic in email was changed.
+        $this->_messages->setMessage($message);
     }
 
 }

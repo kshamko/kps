@@ -27,6 +27,8 @@ class forms_Password extends Zend_Form {
         $submit = new Zend_Form_Element_Submit('Change Password');
         $submit->setDecorators(array(new Zend_Form_Decorator_ViewHelper()));
         $this->addElement($submit);
+        
+        $this->addElement(new Zend_Form_Element_Hidden('form_action', array('value'=>'password')));
     }
 
 }

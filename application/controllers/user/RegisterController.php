@@ -33,15 +33,13 @@ class user_RegisterController extends Kps_Controller {
 
                 //notify via email
                 $mailer = new Helper_Mail();
-                $mailer->setBody('activate_account', array('activation_code' => $code))
+                $mailer->setBody('activate_account', array('code' => $code))
                         ->setSubject('Please activate your account')
                         ->setRecipient($data['user_email'])
                         ->send();
 
-                $this->_log->log('code: ' . $code, Zend_Log::INFO);
-
                 $this->_messages->setMessage('Your account has been created! Please activate it!');
-                $this->_redirect('/');
+                $this->_redirect('/user/auth');
 
                 //login
                 //$this->_auth->getStorage()->write($user);

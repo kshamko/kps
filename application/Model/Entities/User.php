@@ -16,7 +16,7 @@ class User
      * @Id
      * @GeneratedValue(strategy="IDENTITY")
      */
-    private $userId;
+    private $id;
 
     /**
      * @var string
@@ -88,9 +88,9 @@ class User
      *
      * @return integer 
      */
-    public function getUserId()
+    public function getId()
     {
-        return $this->userId;
+        return $this->id;
     }
 
     /**

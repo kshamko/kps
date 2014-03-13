@@ -8,10 +8,10 @@ namespace Model\Entities;
 class Acl{
     
     /** 
-     * @Id @Column(type="integer") 
+     * @Id @Column(name="acl_id", type="integer") 
      * @GeneratedValue(strategy="IDENTITY")
      */
-    private $acl_id;
+    private $id;
     
     /** @Column(length=100) */
     private $acl_resource; // type defaults to string    
@@ -25,9 +25,9 @@ class Acl{
      * @param integer $aclId
      * @return Acl
      */
-    public function setAclId($aclId)
+    public function setId($aclId)
     {
-        $this->acl_id = $aclId;
+        $this->id = $aclId;
     
         return $this;
     }
@@ -37,9 +37,9 @@ class Acl{
      *
      * @return integer 
      */
-    public function getAclId()
+    public function getId()
     {
-        return $this->acl_id;
+        return $this->id;
     }
 
     /**
